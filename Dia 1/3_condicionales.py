@@ -33,17 +33,35 @@ sexo = 'Femenino'
 estatura = 1.08
 # output > NO HAY ROPA
 
-if(sexo == 'Masculino'):
-    if(estatura < 1.30):
+if sexo == 'Masculino':
+    if estatura < 1.30:
         print('No hay ropa')
-    elif (estatura < 1.50):
+    elif estatura < 1.50:
         print('si hay ropa')
-    elif (estatura > 1.50):
+    elif estatura > 1.50:
         print( 'no hay ropa')
-elif(sexo == 'Femenino'):
-    if(estatura < 1.10):
+elif sexo == 'Femenino':
+    if estatura < 1.10:
         print('No hay ropa')
-    elif (estatura < 1.50):
+    elif estatura < 1.50:
         print('si hay ropa')
-    elif (estatura > 1.40):
+    elif estatura > 1.40:
         print( 'no hay ropa')
+
+
+# OPERADOR TERNARIO
+# Condicion que sirve para ejecutarse en una sola linea
+
+nacionalidad = 'peruano'
+
+if nacionalidad == 'peruano':
+    print('paga 5 soles')
+else:
+    print('paga 8 soles')
+
+
+# RESULTADO SI ES VERDADERO                                 ELSE RESULTADO SI ES FALSE
+
+resultado = 'pague 5 soles' if nacionalidad == 'peruano' else 'pague 8 soles'
+
+print(resultado)
