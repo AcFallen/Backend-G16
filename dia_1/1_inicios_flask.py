@@ -20,10 +20,10 @@ def inicio():
         return{
             'message': 'Devolucion Exitosa'
         },200
-    
-    
-
-
+    elif request.method == 'POST':
+        return{
+            'message': 'Creacion Exitosa'
+        },201
 
     print(request.method)
 
