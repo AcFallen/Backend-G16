@@ -97,21 +97,72 @@ def crearUsuario():
             'content' : error.args
         }, 400
     
-@app.route('/usuario/<int:id>', methods = ['GET'])
+@app.route('/usuario/<int:id>', methods = ['GET' , 'PUT' , 'DELETE'])
 def gestionarUsuario(id):
-    usuarioEncontrado = conexion.session.query(UsuarioModel).filter_by(id = id).first()
-    validador = UsuarioModelDto()
-    usuarioValidado = validador.dump(usuarioEncontrado)
-    
+    if request.method == 'GET':
+        usuarioEncontrado = conexion.session.query(UsuarioModel).filter_by(id = id).first()
+        validador = UsuarioModelDto()
+        usuarioValidado = validador.dump(usuarioEncontrado)
+        
 
-    if usuarioEncontrado is None:
+        if usuarioEncontrado is None:
+            return {
+                'message' : 'El usuario no Existe'
+            }, 404
+        else:
+            return{
+                'content' : usuarioValidado
+            },200
+    elif request.method == 'PUT':
+        usuarioEncontrado = conexion.session.query(UsuarioModel).with_entities(UsuarioModel.id).filter_by(id = id).first()
+        # si no existe el usuario
+        if not usuarioEncontrado:
+            return {
+                'message' : 'Usuario no existe'
+            }, 404
+        
+        # Si existe el usuario
+        validador = UsuarioModelDto()
+        # validamos si la informacion enviada es la correcta
+        dataValidada = validador.load(request.get_json())
+        # query
+        conexion.session.query(UsuarioModel).filter_by(id=id).update(dataValidada)
+        # guardamos los datos de manera permanente
+        conexion.session.commit()
         return {
-            'message' : 'El usuario no Existe'
-        }, 404
-    else:
-        return{
-            'content' : usuarioValidado
+            'message' : 'Usuario actualizado exitosamente'
         },200
+    
+    elif request.method == 'DELETE':
+        usuarioEncontrado = conexion.session.query(UsuarioModel).with_entities(UsuarioModel.id).filter_by(id = id).first()
+        # si no existe el usuario
+        if not usuarioEncontrado:
+            return {
+                'message' : 'Usuario no existe'
+            }, 404
+        
+        conexion.session.query(UsuarioModel).filter_by(id=id).delete()
+
+        conexion.session.commit()
+
+        return {}, 204
+
+@app.route('/usuario/deshabilitar/<int:id>' , methods = ['DELETE'])
+def deshabilitarUsuario(id):
+    usuarioEncontrado = conexion.session.query(UsuarioModel).with_entities(UsuarioModel.id).filter_by(id = id).first()
+        # si no existe el usuario
+    if not usuarioEncontrado:
+        return {
+            'message' : 'Usuario no existe'
+        }, 404
+    
+    conexion.session.query(UsuarioModel).filter_by(id=id).update({'activo' : False})
+
+    conexion.session.commit()
+
+    return {
+        'message' : 'Usuario inhabilitado exitosamente'
+    } , 204
 
 @app.route('/')
 def inicial():
