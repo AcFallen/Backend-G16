@@ -7,3 +7,8 @@
         Migrate(app=app , db=conexion)
     ```
 4. Crear la variable de entorno en el archivo .env
+
+5. activar el entorno
+    ```
+    source entorno_flask_sql_alchemy/scripts/activate
+    ```
