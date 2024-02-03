@@ -1,1 +1,1 @@
-from controllers.invitado import InvitadosController
+from .invitado import InvitadosController

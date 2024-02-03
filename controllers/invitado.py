@@ -1,9 +1,44 @@
-from flask_restful import Resource
+from flask_restful import Resource , request
+from dtos import RegistrarInvitadoDTO
+from requests import get
+from os import environ
+from variables import conexion
+from models import Invitado
 
 class InvitadosController(Resource):
     def post(self):
-        print('ingreso al post')
+        dto = RegistrarInvitadoDTO()
+        try:
+            data_serializada = dto.load(request.get_json())
+            print(data_serializada)
+            token_api_dni= environ.get('API_DNI')
 
-        return {
-            'message' : 'invitado creado exitosamente'
-        }
+            if not token_api_dni:
+
+                raise Exception('Falta configurar la token de Api Peru')
+
+            resultado = get(f"https://api.apis.net.pe/v2/reniec/dni?numero={data_serializada.get('dni')}",
+                 headers={'Authorization' : f'Bearer {token_api_dni}'})
+            
+            # convierte la informacion a un diccionario legible en python
+            print(resultado.json())
+            data_api = resultado.json()
+
+            nuevo_invitado = Invitado(dni = data_serializada.get('dni'),
+                     nombre= data_api.get('nombres'),
+                     apellido=data_api.get('apellidoPaterno')
+                     + ' ' +
+                     data_api.get('apellidoMaterno'),
+                     telefono= data_serializada.get('telefono'))
+            
+            conexion.session.add(nuevo_invitado)
+            conexion.session.commit()
+
+            return {
+                'message' : 'invitado creado exitosamente'                
+            }
+        except Exception as e:
+            return {
+                'message': 'Error al crear el invitado',
+                'content': e.args
+            }

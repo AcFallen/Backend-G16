@@ -8,6 +8,6 @@ class Trago(conexion.Model):
     nombre = Column(type_=types.Text,
                     nullable=False)
     disponible = Column(type_=types.Boolean,
-                        server_default='true')
+                        server_default='1')
     
     __tablename__ = 'tragos'
