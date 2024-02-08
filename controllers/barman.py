@@ -55,7 +55,9 @@ class LoginController(Resource):
             if not validar_password:
                 raise Exception('El password es incorrecto')
 
-            token = create_access_token(identity=barman_encontrado.id)
+            token = create_access_token(identity=barman_encontrado.id , additional_claims={
+                'nombre' : barman_encontrado.nombre
+            })
 
             return {
                 'message' : 'Bienvenido',
