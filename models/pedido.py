@@ -1,4 +1,4 @@
-from sqlalchemy import Column , types , ForeignKey
+from sqlalchemy import Column , types , ForeignKey 
 from variables import conexion
 from enum import Enum
 
@@ -20,10 +20,12 @@ class Pedido(conexion.Model):
                             server_default=func.now(),
                             nullable=False)
     
-    estado = Column(type_=types.Enum(EstadoPedidosEnum))
+    estado = Column(type_=types.Enum(EstadoPedidosEnum),
+                    server_default=EstadoPedidosEnum.EN_ESPERA.value)
 
     invitado = Column(ForeignKey(column='invitados.id'),
                       nullable=False, name='invitado_id')
     
     barman = Column(ForeignKey(column='barmans.id'),
                     name='barman_id')
+   
