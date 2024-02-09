@@ -58,7 +58,10 @@ class LoginInvitadoController(Resource):
                 return{
                     'message' : 'Invitado no existe , prueba con el DNI de tu acompanante'
                 }, 404
-            token = create_access_token(identity=invitado_encontrado[0])
+            token = create_access_token(identity=invitado_encontrado[0],
+                                        additional_claims={
+                                            'tipo' : 'Invitado'
+                                        })
             return {
                 'message' : 'Bienvenido',
                 'token': token 

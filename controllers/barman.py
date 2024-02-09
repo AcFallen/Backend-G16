@@ -4,6 +4,7 @@ from models import Barman
 from dtos import RegistrarBarmanDTO ,LoginBarmanDTO
 from bcrypt import gensalt , hashpw , checkpw
 from flask_jwt_extended import create_access_token
+from datetime import timedelta
 
 
 class BarmanController(Resource):
@@ -56,8 +57,9 @@ class LoginController(Resource):
                 raise Exception('El password es incorrecto')
 
             token = create_access_token(identity=barman_encontrado.id , additional_claims={
+                'tipo' : 'Barman',
                 'nombre' : barman_encontrado.nombre
-            })
+            }, expires_delta=timedelta(hours=8))
 
             return {
                 'message' : 'Bienvenido',
