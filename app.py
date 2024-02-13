@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
-from variables import conexion
-from dotenv import load_dotenv
+from variables import conexion ,cliente_twilio
+
 # os > operating systemc
 from os import environ
 #tablas
@@ -14,10 +14,12 @@ from datetime import timedelta
 
 from decoradores import validar_barman
 from models.pedido import EstadoPedidosEnum
+from flasgger import Swagger
+from json import load
 
 # leera el archivo .env si existe y agregara todas las variables como si fuesen variables de entorno del sistema
 # este load_dotenv teine que ir en la parte mas alta para que pueda ser utilizado en todo el proyecto
-load_dotenv()
+
 
 app = Flask(__name__)
 api = Api(app=app)
@@ -28,6 +30,22 @@ app.config['JWT_SECRET_KEY'] = environ.get('JWT_SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1 , minutes=30)
 
 conexion.init_app(app)
+
+swaggerConfig ={
+    'headers': [],
+    'specs': [
+        {
+            'endpoint':'',
+            'route' : '/'
+        }
+    ],
+    'static_url_path': '/flassger_static',
+    'specs_route' : '/documentacion'
+}
+
+
+swaggerTemplate = load(open('swagger_template.json'))
+Swagger(app=app,template=swaggerTemplate,config=swaggerConfig)
 
 JWTManager(app=app)
 
@@ -40,6 +58,7 @@ api.add_resource(BarmanController, '/barman')
 api.add_resource(LoginController, '/login')
 api.add_resource(LoginInvitadoController, '/login-invitado')
 api.add_resource(PedidosController, '/pedidos')
+api.add_resource(TragoController, '/tragos')
 
 @app.route('/preparar-pedido/<int:id>' , methods=['POST'])
 @validar_barman
@@ -79,6 +98,16 @@ def pedidoPreparado(id):
 
     conexion.session.commit()
 
+    pedido_encontrado.invitado.telefono
+
+    mensaje = cliente_twilio.messages.create(
+        from_='+14432750369',
+        to= f'+51{pedido_encontrado.invitado.telefono}',
+        body=f'''Hola {pedido_encontrado.invitado.nombre}. 
+        Tu pedido de la barra ya esta LISTO!!! 🍹'''
+    )
+    #sid > es el identificador del mensaje por si lo queremos validar en la pagina de twilio
+    print(mensaje.sid)
     return{
         'message':'Pedido completado'
     },200

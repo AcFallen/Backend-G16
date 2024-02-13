@@ -1,4 +1,4 @@
-from sqlalchemy import Column , types , ForeignKey 
+from sqlalchemy import Column , types , ForeignKey , orm
 from variables import conexion
 from enum import Enum
 
@@ -28,4 +28,6 @@ class Pedido(conexion.Model):
     
     barmanId = Column(ForeignKey(column='barmans.id'),
                     name='barman_id')
+    
+    invitado = orm.relationship(argument='Invitado' , backref='pedidos')
    

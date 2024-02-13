@@ -1,0 +1,32 @@
+tags:
+  - Invitado
+operationId: crear_invitado
+description: Crear un nuevo invitado
+parameters:
+  - in: body
+    name: body
+    schema:
+      properties:
+        telefono:
+          type: string
+          example: 947165075
+        dni:
+          type: string
+          example: 77206879
+responses:
+  201:
+    schema:
+      properties:
+        message:
+          type: string
+          example: Invitado creado con exito
+
+  400:
+    schema:
+      properties:
+        message:
+          type: string
+          example: Error al crear el invitado
+        content:
+          type: string
+          example: Causa del error
