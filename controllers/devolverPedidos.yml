@@ -1,0 +1,18 @@
+Devuelve los pedidos al barman loguado
+---
+tags:
+  - Pedido
+operationId: listPedidos
+description: Devuelve todo los pedidos
+
+security:
+  - Bearer: []
+
+responses:
+  200:
+    schema:
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/definitios/Pedido"

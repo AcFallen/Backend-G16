@@ -49,6 +49,9 @@ class PedidosController(Resource):
     
     @validar_barman
     def get(self):
+        '''
+        file: controllers/devolverPedidos.yml
+        '''
         pedidos = conexion.session.query(Pedido).all()
         print(pedidos[0].detallePedidos)
         dto = ListarPedidosDTO()
