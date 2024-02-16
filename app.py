@@ -16,6 +16,7 @@ from decoradores import validar_barman
 from models.pedido import EstadoPedidosEnum
 from flasgger import Swagger
 from json import load
+from flask_cors import CORS
 
 # leera el archivo .env si existe y agregara todas las variables como si fuesen variables de entorno del sistema
 # este load_dotenv teine que ir en la parte mas alta para que pueda ser utilizado en todo el proyecto
@@ -23,6 +24,7 @@ from json import load
 
 app = Flask(__name__)
 api = Api(app=app)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL')
 
 # Configuraciones para mi JWT
