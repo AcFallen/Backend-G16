@@ -1,0 +1,6 @@
+django-admin startproyect NOMBREDEPROYECTO [direccion]                  > inicializa un nuevo proyecto
+python manage.py runserver                                              > levanta el servidor de desarrollo
+py manage.py showmigrations                                             > lista las migraciones y las que an sido ejecutadas [x]
+py manage.py migrate                                                    > ejecuta las migraciones restantes
+py manage.py createsuperuser                                            > crear un super usuario para poder acceder al panel administrativo
+py manage.py startapp [NOMBRE DE LA APLICACION]                         > crea una aplicacion dentro del proyecto actual
