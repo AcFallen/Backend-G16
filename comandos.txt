@@ -4,3 +4,5 @@ py manage.py showmigrations                                             > lista 
 py manage.py migrate                                                    > ejecuta las migraciones restantes
 py manage.py createsuperuser                                            > crear un super usuario para poder acceder al panel administrativo
 py manage.py startapp [NOMBRE DE LA APLICACION]                         > crea una aplicacion dentro del proyecto actual
+py manage.py makemigrations NOMBRE_APP --name NOMBRE DE LA MIGRACION
+py manage.py migrate
