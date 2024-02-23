@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'gestion', # cada vez que creamos  o agregamos una aplicacion al proyecto esta se agregue en esta seccion sino django no la reconocera
-    'rest_framework'
+    'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = BASE_DIR / 'archivos'
 
 MEDIA_URL = '/'
+
+SWAGGER_SETTINGS ={
+    'DEFAULT_MODEL_RENDERING': 'example'
+}
