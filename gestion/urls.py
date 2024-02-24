@@ -1,6 +1,6 @@
 # aca estaran declaradas todas las rutas relacionadas ala aplicacion de gestion
 from django.urls import path
-from .views import mostrarRecetas, vistaPrueba , controlladorInicial ,PlatosController ,PlatoController,IngredientesController,listarIngredientesPlato,crearPreparacion,buscarRecetas
+from .views import mostrarRecetas, vistaPrueba , controlladorInicial ,PlatosController ,PlatoController,IngredientesController,listarIngredientesPlato,crearPreparacion,buscarRecetas, crearCheff
 urlpatterns = [
     path('prueba/', view=vistaPrueba),
     path('mostrar-recetas/' , view=mostrarRecetas),
@@ -10,5 +10,7 @@ urlpatterns = [
     path('ingredientes/',IngredientesController.as_view()),
     path('plato/<int:id>/ingredientes/', view=listarIngredientesPlato),
     path('preparacion/', view=crearPreparacion),
-    path('buscar-recetas/', view=buscarRecetas)
+    path('buscar-recetas/', view=buscarRecetas),
+    path('registro-cheff/',view=crearCheff)
+
 ]

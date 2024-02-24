@@ -1,13 +1,20 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser , PermissionsMixin ,BaseUserManager
+
 
 # Create your models here.
+TipoPlatoOpciones = [
+    ('entrada', 'ENTRADA'),
+    ('plato_de_fondo', 'PLATO DE FONDO'),
+    ('postre', 'POSTRE')
+]
 
 class Plato(models.Model):
     id = models.AutoField(primary_key=True, null=False)
     nombre = models.TextField(null=False)
     foto = models.ImageField()
-
+    tipo = models.TextField(choices=TipoPlatoOpciones,
+                            default=TipoPlatoOpciones[0][0]) # entrada
     class Meta:
         db_table = 'platos'
 
@@ -40,8 +47,23 @@ class Preparacion(models.Model):
         ordering = ['-orden']
         unique_together = [['orden', 'platoId']]
 
+
+class ManejadorUsuario(BaseUserManager):
+    def create_superuser(self, nombre , correo , password):
+        if not correo:
+            raise ValueError('El usuario tiene que tener un correo')
+        
+        correo_normalizado = self.normalize_email(correo)
+        nuevo_usuario = self.model(correo = correo , nombre = nombre)
+        nuevo_usuario.set_password(password)
+
+        nuevo_usuario.is_superuser =True
+        nuevo_usuario.is_staff = True
+
+        nuevo_usuario.save()
 # vamos a utilizar el modelo auth_user 
-class Cheff(AbstractBaseUser):
+# PERMISSION MIXIN > sirve para indicarle a nuestro proyecto que ahora esta tabla  tbn sera la encargada de manejar el sistema de permisos, es decir ahi se encuentra todos los permisos de nuestra aplicacion en el panel administrativo
+class Cheff(AbstractBaseUser , PermissionsMixin):
     id = models.AutoField(primary_key=True , null=False)
     nombre = models.TextField(null=False)
     correo = models.EmailField(unique =True , null=False)
@@ -53,6 +75,9 @@ class Cheff(AbstractBaseUser):
     # para poder realizar el login en el panel administrativo
     USERNAME_FIELD = 'correo'
     REQUIRED_FIELDS = ['nombre']
+
+    #TODO: vamos a modificar el comportamiento del atributo objects para que pueda aceptar una creacion de superusario
+    objects = ManejadorUsuario()
 
     class Meta:
         db_table = 'cheffs'

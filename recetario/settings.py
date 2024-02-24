@@ -136,3 +136,6 @@ MEDIA_URL = '/'
 SWAGGER_SETTINGS ={
     'DEFAULT_MODEL_RENDERING': 'example'
 }
+
+#TODO: indicar si cambiamos el auth_user a uno nuevo
+AUTH_USER_MODEL = 'gestion.Cheff'
