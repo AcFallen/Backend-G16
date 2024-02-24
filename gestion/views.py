@@ -8,6 +8,7 @@ from rest_framework import status
 from os import remove
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework.permissions import IsAdminUser,IsAuthenticated,IsAuthenticatedOrReadOnly,AllowAny
 
 
 # Create your views here.
@@ -39,6 +40,7 @@ def controlladorInicial(request):
     })
 
 class PlatosController(APIView):
+    permission_classes=[IsAuthenticatedOrReadOnly,]
     def get(self, request):
         resultado = Plato.objects.all()
         print(resultado)
@@ -52,7 +54,10 @@ class PlatosController(APIView):
         })
     
     def post(self,request):
-        print(request.data)
+        print(request.user)
+        print(request.auth)
+        # agregamos una nueva propiedad a una data que seia el id del cheff
+        request.data['cheffId'] = request.user.id
         serializador = PlatoSerializer(data=request.data)
         validacion = serializador.is_valid()
         
@@ -69,7 +74,7 @@ class PlatosController(APIView):
             },status=status.HTTP_400_BAD_REQUEST)
         
 class PlatoController(APIView):
-
+    permission_classes=[IsAuthenticatedOrReadOnly,]
     def get(self,request,id):
         plato_encontrado = Plato.objects.filter(id = id).first()
         if not plato_encontrado:
@@ -126,22 +131,37 @@ class PlatoController(APIView):
         return Response(data=None,status=status.HTTP_204_NO_CONTENT)
     
 class IngredientesController(APIView):
-    def post (self,request):
-        request.data
-        serializador = IngredienteSerializer(data=request.data)
-        validacion = serializador.is_valid()
+    permission_classes = [IsAuthenticated]
 
-        if validacion:
+    def post(self, request):
+        cheff = request.user
+        serializador = IngredienteSerializer(data=request.data)
+        # request.data > {descripcion: '100gr de azucar', platoId: 10}
+        if serializador.is_valid():
+            # buscar si el plato le pertenece a este cheff, sino no permitir el guardado
+            # al momento de hacer la validacion con el serializador ya me devuelve el plato
+            plato_encontrado = serializador.validated_data.get('platoId')
+
+            # el plato_encontrado al momento de utilizar su cheffId retorna toda la informacion del cheff y no solo su id
+            if plato_encontrado.cheffId and plato_encontrado.cheffId.id != cheff.id:
+                # el cheff no es el propietario de ese plato
+                return Response(data={
+                    'message': 'No tienes acceso para modificar esta receta'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+
             serializador.save()
-            return Response ({
+
+            return Response({
                 'message': 'Ingrediente agregado exitosamente',
+                # nos devolvera la informacion agregada a la base de datos
                 'content': serializador.data
             }, status=status.HTTP_201_CREATED)
+
         else:
-            return Response(data={
-                'message': 'Error al ingresar el ingrediente',
+            return Response({
+                'message': 'Error al guardar el ingrediente',
                 'content': serializador.errors
-            },status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST)
         
 @api_view(http_method_names=['GET'])
 def listarIngredientesPlato(request,id):
@@ -230,7 +250,7 @@ def crearCheff(request):
         nuevo_cheff.set_password(serializador.validated_data.get('password'))
         nuevo_cheff.save()
         print(request.data.get('correo'))
-        
+
         return Response(data={
             'message':'cheff creado exitosamente',
             'content': serializador.data

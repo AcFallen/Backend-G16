@@ -1,6 +1,9 @@
 # aca estaran declaradas todas las rutas relacionadas ala aplicacion de gestion
 from django.urls import path
 from .views import mostrarRecetas, vistaPrueba , controlladorInicial ,PlatosController ,PlatoController,IngredientesController,listarIngredientesPlato,crearPreparacion,buscarRecetas, crearCheff
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 urlpatterns = [
     path('prueba/', view=vistaPrueba),
     path('mostrar-recetas/' , view=mostrarRecetas),
@@ -11,6 +14,6 @@ urlpatterns = [
     path('plato/<int:id>/ingredientes/', view=listarIngredientesPlato),
     path('preparacion/', view=crearPreparacion),
     path('buscar-recetas/', view=buscarRecetas),
-    path('registro-cheff/',view=crearCheff)
-
+    path('registro-cheff/',view=crearCheff),
+    path('login/',view=TokenObtainPairView.as_view()),
 ]
